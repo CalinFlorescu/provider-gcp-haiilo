@@ -10,12 +10,14 @@ import (
 
 	ujconfig "github.com/upbound/upjet/pkg/config"
 
-	"github.com/upbound/upjet-provider-template/config/null"
+	"github.com/haiilo/provider-gcp-haiilo/config/null"
+
+	"github.com/haiilo/provider-gcp-haiilo/config/transferjob"
 )
 
 const (
-	resourcePrefix = "template"
-	modulePath     = "github.com/upbound/upjet-provider-template"
+	resourcePrefix = "gcp-haiilo"
+	modulePath     = "github.com/haiilo/provider-gcp-haiilo"
 )
 
 //go:embed schema.json
@@ -35,6 +37,7 @@ func GetProvider() *ujconfig.Provider {
 	for _, configure := range []func(provider *ujconfig.Provider){
 		// add custom config functions
 		null.Configure,
+		transferjob.Configure,
 	} {
 		configure(pc)
 	}

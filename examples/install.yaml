@@ -1,6 +1,6 @@
 apiVersion: pkg.crossplane.io/v1
 kind: Provider
 metadata:
-  name: upjet-provider-template
+  name: provider-gcp-haiilo
 spec:
-  package: upbound/upjet-provider-template:v0.1.0
+  package: haiilo/provider-gcp-haiilo:v0.1.0

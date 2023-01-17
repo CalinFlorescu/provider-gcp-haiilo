@@ -13,7 +13,7 @@ import (
 
 // Package type metadata.
 const (
-	Group   = "template.upbound.io"
+	Group   = "gcp-haiilo.upbound.io"
 	Version = "v1alpha1"
 )
 
