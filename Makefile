@@ -2,7 +2,7 @@
 # Setup Project
 
 PROJECT_NAME := provider-gcp-haiilo
-PROJECT_REPO := github.com/CalinFlorescu/$(PROJECT_NAME)
+PROJECT_REPO := github.com/haiilo/$(PROJECT_NAME)
 
 export TERRAFORM_VERSION := 1.3.3
 
