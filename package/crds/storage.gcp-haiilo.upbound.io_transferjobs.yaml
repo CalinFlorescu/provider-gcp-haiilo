@@ -766,6 +766,10 @@ spec:
                     description: When the Transfer Job was last modified. When the
                       Transfer Job was last modified.
                     type: string
+                  name:
+                    description: The name of the Transfer Job. The name of the Transfer
+                      Job.
+                    type: string
                 type: object
               conditions:
                 description: Conditions of the resource.

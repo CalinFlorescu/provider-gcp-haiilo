@@ -10,8 +10,6 @@ import (
 
 	ujconfig "github.com/upbound/upjet/pkg/config"
 
-	"github.com/haiilo/provider-gcp-haiilo/config/null"
-
 	"github.com/haiilo/provider-gcp-haiilo/config/transferjob"
 )
 
@@ -36,7 +34,6 @@ func GetProvider() *ujconfig.Provider {
 
 	for _, configure := range []func(provider *ujconfig.Provider){
 		// add custom config functions
-		null.Configure,
 		transferjob.Configure,
 	} {
 		configure(pc)

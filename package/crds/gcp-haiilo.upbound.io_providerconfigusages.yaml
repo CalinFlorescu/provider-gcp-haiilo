@@ -11,7 +11,7 @@ spec:
   names:
     categories:
     - crossplane
-    - provider
+    - providerconfig
     - gcp-haiilo
     kind: ProviderConfigUsage
     listKind: ProviderConfigUsageList

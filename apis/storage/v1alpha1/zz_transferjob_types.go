@@ -308,6 +308,10 @@ type TransferJobObservation struct {
 	// When the Transfer Job was last modified.
 	// When the Transfer Job was last modified.
 	LastModificationTime *string `json:"lastModificationTime,omitempty" tf:"last_modification_time,omitempty"`
+
+	// The name of the Transfer Job.
+	// The name of the Transfer Job.
+	Name *string `json:"name,omitempty" tf:"name,omitempty"`
 }
 
 type TransferJobParameters struct {

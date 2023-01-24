@@ -6,8 +6,8 @@ package clients
 
 import (
 	"context"
-	"encoding/json"
 
+	xpv1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
 	"github.com/crossplane/crossplane-runtime/pkg/resource"
 	"github.com/pkg/errors"
 	"k8s.io/apimachinery/pkg/types"
@@ -19,12 +19,21 @@ import (
 )
 
 const (
+	keyProject                   = "project"
+	keyCredentials               = "credentials"
+	keyAccessToken               = "access_token"
+	credentialsSourceAccessToken = "AccessToken"
+)
+
+const (
 	// error messages
-	errNoProviderConfig     = "no providerConfigRef provided"
-	errGetProviderConfig    = "cannot get referenced ProviderConfig"
-	errTrackUsage           = "cannot track ProviderConfig usage"
-	errExtractCredentials   = "cannot extract credentials"
-	errUnmarshalCredentials = "cannot unmarshal gcp-haiilo credentials as JSON"
+	errNoProviderConfig        = "no providerConfigRef provided"
+	errGetProviderConfig       = "cannot get referenced ProviderConfig"
+	errTrackUsage              = "cannot track ProviderConfig usage"
+	errExtractCredentials      = "cannot extract credentials"
+	errUnmarshalCredentials    = "cannot unmarshal gcp-haiilo credentials as JSON"
+	errExtractKeyCredentials   = "cannot extract JSON key credentials"
+	errExtractTokenCredentials = "cannot extract Access Token credentials"
 )
 
 // TerraformSetupBuilder builds Terraform a terraform.SetupFn function which
@@ -53,20 +62,28 @@ func TerraformSetupBuilder(version, providerSource, providerVersion string) terr
 			return ps, errors.Wrap(err, errTrackUsage)
 		}
 
-		data, err := resource.CommonCredentialExtractor(ctx, pc.Spec.Credentials.Source, client, pc.Spec.Credentials.CommonCredentialSelectors)
-		if err != nil {
-			return ps, errors.Wrap(err, errExtractCredentials)
-		}
-		creds := map[string]string{}
-		if err := json.Unmarshal(data, &creds); err != nil {
-			return ps, errors.Wrap(err, errUnmarshalCredentials)
+		// set provider configuration
+		ps.Configuration = map[string]interface{}{
+			keyProject: pc.Spec.ProjectID,
 		}
 
-		// Set credentials in Terraform provider configuration.
-		/*ps.Configuration = map[string]any{
-			"username": creds["username"],
-			"password": creds["password"],
-		}*/
+		switch pc.Spec.Credentials.Source { //nolint:exhaustive
+		case xpv1.CredentialsSourceInjectedIdentity:
+			// We don't need to do anything here, as the TF Provider will take care of workloadIdentity etc.
+		case credentialsSourceAccessToken:
+			data, err := resource.CommonCredentialExtractor(ctx, xpv1.CredentialsSourceSecret, client, pc.Spec.Credentials.CommonCredentialSelectors)
+			if err != nil {
+				return ps, errors.Wrap(err, errExtractTokenCredentials)
+			}
+			ps.Configuration[keyAccessToken] = string(data)
+		default:
+			data, err := resource.CommonCredentialExtractor(ctx, pc.Spec.Credentials.Source, client, pc.Spec.Credentials.CommonCredentialSelectors)
+			if err != nil {
+				return ps, errors.Wrap(err, errExtractKeyCredentials)
+			}
+			ps.Configuration[keyCredentials] = string(data)
+		}
+
 		return ps, nil
 	}
 }
